@@ -70,6 +70,10 @@ class AuthController extends Controller
      **/
     public function logout(Request $request)
     {
-        // Coming soon
+        // logout
+        Auth::logout();
+
+        // Redirect to homepage
+        return redirect('/');
     }
 }
