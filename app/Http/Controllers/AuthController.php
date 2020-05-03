@@ -2,7 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
+use App\Mail\SigninEmail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 
 class AuthController extends Controller
 {
@@ -10,11 +16,28 @@ class AuthController extends Controller
      * Processes the login form
      *
      * @param \Illuminate\Http\Request $request
-     * @return redirect
+     * @return string
      **/
     public function login(Request $request)
     {
-        // Coming soon
+        // find the user for the email - or create it.
+        $user = User::firstOrCreate(
+            ['email' => $request->post('email')],
+            ['name' => $request->post('email'), 'password' => Str::random()]
+        );
+
+        // create a signed URL for login
+        $url = URL::temporarySignedRoute(
+            'sign-in',
+            now()->addMinutes(30),
+            ['user' => $user->id]
+        );
+
+        // send the email
+        Mail::send(new SigninEmail($user, $url));
+
+        // inform the user
+        return view('login-sent');
     }
 
     /**
