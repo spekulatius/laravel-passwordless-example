@@ -8,7 +8,8 @@
   <body>
     <main>
       <section>
-        <form>
+        <form action="{{ route('login.submit') }}" method="POST">
+        {{ csrf_field() }}
           <header>
             <h2>Login</h2>
           </header>
