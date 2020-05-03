@@ -44,11 +44,22 @@ class AuthController extends Controller
      * Processes the actual login
      *
      * @param \Illuminate\Http\Request $request
+     * @param \App\User $user
      * @return redirect
      **/
-    public function signIn(Request $request)
+    public function signIn(Request $request, $user)
     {
-        // Coming soon
+        // Check if the URL is valid
+        if (!$request->hasValidSignature()) {
+            abort(401);
+        }
+
+        // Authenticate the user
+        $user = User::findOrFail($user);
+        Auth::login($user);
+
+        // Redirect to homepage
+        return redirect('/');
     }
 
     /**
